@@ -1,10 +1,11 @@
 package com.example.helloworld;
 
+import com.codahale.metrics.JmxReporter;
+import com.example.helloworld.health.TemplateHealthCheck;
+import com.example.helloworld.resources.HelloWorldResource;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import com.example.helloworld.resources.HelloWorldResource;
-import com.example.helloworld.health.TemplateHealthCheck;
 
 public class HelloWorldApplication extends Application<HelloWorldConfiguration>
 {
@@ -31,10 +32,13 @@ public class HelloWorldApplication extends Application<HelloWorldConfiguration>
                     Environment environment)
     {
         // nothing to do yet
-        HelloWorldResource resource = new HelloWorldResource(configuration.getTemplate(), configuration.getDefaultName());
+        HelloWorldResource resource = new HelloWorldResource(configuration.getTemplate(), configuration.getDefaultName(), environment.metrics());
         environment.jersey().register(resource);
         environment.healthChecks().register("blabla", new TemplateHealthCheck(configuration.getTemplate()));
-//        environment.
+        environment.metrics().counter("myCounter").inc();
+        final JmxReporter reporter = JmxReporter.forRegistry(environment.metrics()).build();
+        reporter.start();
+
     }
 
 }

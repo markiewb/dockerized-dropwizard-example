@@ -41,8 +41,7 @@ public class HelloWorldApplication extends Application<HelloWorldConfiguration>
         // nothing to do yet
         HelloWorldResource resource = new HelloWorldResource(configuration.getTemplate(), configuration.getDefaultName(), environment.metrics());
         environment.jersey().register(resource);
-        environment.healthChecks().register("blabla", new TemplateHealthCheck(configuration.getTemplate()));
-        environment.metrics().counter("myCounter").inc();
+        environment.healthChecks().register("myTemplateHealthCheck", new TemplateHealthCheck(configuration.getTemplate()));
         final JmxReporter reporter = JmxReporter.forRegistry(environment.metrics()).build();
         reporter.start();
 

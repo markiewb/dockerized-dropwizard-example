@@ -34,12 +34,13 @@ public class HelloWorldResource
     @Timed
     public Saying sayHello(@QueryParam("name") Optional<String> name)
     {
-        metrics.counter("myCounter").inc();
-        Timer.Context context = metrics.timer("myTimer").time();
+        metrics.counter("myRequestCount").inc();
+        Timer.Context context = metrics.timer("myRequestTime").time();
         String value = null;
         try
         {
             value = String.format(template, name.orElse(defaultName));
+            // emulate long-running processing
             Thread.sleep((long) (Math.random() * 2000));
         } catch (InterruptedException e)
         {
